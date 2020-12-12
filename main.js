@@ -82,7 +82,7 @@ class TasksView extends React.Component {
 	}
 	
 	render () {
-		return (<div>{this.tasksList}</div>);
+		return (<div>{this.tasksList()}</div>);
 	}
 }
 
