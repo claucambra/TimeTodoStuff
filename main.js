@@ -20,6 +20,7 @@ class TaskCreator extends React.Component {
 	}
 }
 
+/*
 class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
@@ -27,6 +28,6 @@ class TasksView extends React.Component {
 	render () {
 		return ();
 	}
-}
+}*/
 
 ReactDOM.render(<TodoApp />, document.getElementbyId("container"));
