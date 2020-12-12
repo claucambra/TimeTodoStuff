@@ -28,9 +28,11 @@ class TaskCreator extends React.Component {
 			details: ""
 		}
 		this.addTask = this.addTask.bind(this);
+		this.inputHandler = this.inputHandler.bind(this);
 	}
 	
 	inputHandler(event) {
+		event.preventDefault();
 		this.setState({name: event.target.value});
 	}
 	
