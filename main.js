@@ -1,5 +1,3 @@
-var tasks = [];
-
 class Task {
 	constructor(name, details) {
 		this.name = name;
@@ -12,10 +10,16 @@ class Task {
 class TodoApp extends React.Component {
 	constructor (props) {
 		super (props);
+		this.state = {
+			tasks: [];
+		}
 	}
 	render () {
 		return (
-			<TaskCreator />
+			<div>
+				<TaskCreator tasks={this.state.tasks}/>
+				<TasksView tasks={this.state.tasks}/>
+			</div>
 		);
 	}
 }
@@ -37,8 +41,8 @@ class TaskCreator extends React.Component {
 	
 	addTask(event) {
 		let taskToAdd = new Task(this.state.name, this.state.details)
-		tasks.push(taskToAdd);
-		console.log(tasks);
+		this.props.tasks.push(taskToAdd);
+		console.log(this.props.tasks);
 		event.preventDefault();
 	}
 	
@@ -57,6 +61,12 @@ class TasksView extends React.Component {
 		super (props);
 	}
 	
+	componentDidUpdate(prevProps) {
+		if (prevProps != this.props) {
+			this.tasksList();
+		}
+	}
+	
 	tasksList () {
 		let taskCards = [];
 		
@@ -64,7 +74,7 @@ class TasksView extends React.Component {
 			return <div class="taskCard"><h1>{name}</h1><br /><p>{details}</p></div>
 		}
 		
-		for(let task in tasks) {
+		for(let task in this.props.tasks) {
 			taskCards.push(cardBuild(task.name, task.details));
 		}
 		
@@ -72,7 +82,7 @@ class TasksView extends React.Component {
 	}
 	
 	render () {
-		return (<div>{taskcards}</div>);
+		return (<div>{this.tasksList}</div>);
 	}
 }
 
