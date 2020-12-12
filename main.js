@@ -52,13 +52,28 @@ class TaskCreator extends React.Component {
 	}
 }
 
-/*class TasksView extends React.Component {
+class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
 	}
-	render () {
-		return ();
+	
+	tasksList () {
+		let taskCards = [];
+		
+		function cardBuild(name, details) {
+			return <div class="taskCard"><h1>{name}</h1><br><p>{details}</p></div>
+		}
+		
+		for(let task in tasks) {
+			taskCards.push(cardBuild(task.name, task.details));
+		}
+		
+		return taskCards;
 	}
-}*/
+	
+	render () {
+		return (<div>{taskcards}</div>);
+	}
+}
 
 ReactDOM.render(<TodoApp />, document.getElementById("container"));
