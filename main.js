@@ -30,6 +30,10 @@ class TaskCreator extends React.Component {
 		this.addTask = this.addTask.bind(this);
 	}
 	
+	inputHandler(event) {
+		this.setState({name: event.target.value});
+	}
+	
 	addTask() {
 		let taskToAdd = new Task(this.state.name, this.state.details)
 		tasks.push(taskToAdd);
@@ -39,7 +43,7 @@ class TaskCreator extends React.Component {
 	render() {
 		return (
 			<form onSubmit={this.addTask}>
-				<input type="text" id="taskName" placeholder="New Task"></input>
+				<input type="text" id="taskName" placeholder="New Task" onChange={inputHandler}></input>
 				<button type="submit">Submit</button>
 			</form>
 		);
