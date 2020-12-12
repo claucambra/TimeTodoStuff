@@ -13,11 +13,18 @@ class TodoApp extends React.Component {
 		this.state = {
 			tasks: []
 		}
+    this.addTask = this.addTask.bind(this);
 	}
+  
+  addTask(name, details) {
+		let taskToAdd = new Task(name, details)
+    this.setState(state => state.tasks.push(taskToAdd))
+	}
+  
 	render () {
 		return (
 			<div>
-				<TaskCreator tasks={this.state.tasks}/>
+				<TaskCreator tasks={this.state.tasks} adder={this.addTask}/>
 				<TasksView tasks={this.state.tasks}/>
 			</div>
 		);
@@ -31,27 +38,25 @@ class TaskCreator extends React.Component {
 			name: "",
 			details: ""
 		}
-		this.addTask = this.addTask.bind(this);
 		this.inputHandler = this.inputHandler.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
 	}
 	
 	inputHandler(event) {
 		this.setState({name: event.target.value});
 	}
 	
-	addTask(event) {
-		let taskToAdd = new Task(this.state.name, this.state.details)
-		this.props.tasks.push(taskToAdd);
-		console.log(this.props.tasks);
-		event.preventDefault();
-	}
-	
+  submitHandler() {
+    console.log("added")
+    this.props.adder(this.state.name, "placeholder detail");
+  }
+  
 	render() {
 		return (
-			<form onSubmit={this.addTask}>
+			<div>
 				<input type="text" id="taskName" placeholder="New Task" onChange={this.inputHandler}></input>
-				<button type="submit">Submit</button>
-			</form>
+				<button type="button" onClick={this.submitHandler}>Submit</button>
+			</div>
 		);
 	}
 }
@@ -61,14 +66,9 @@ class TasksView extends React.Component {
 		super (props);
 	}
 	
-	componentDidUpdate(prevProps) {
-		if (prevProps != this.props) {
-			console.log("beep");
-		}
-	}
-	
 	render () {
-		var taskCards = this.props.tasks.map(task => <div class="taskCard"><h1>{task.name}</h1><br /><p>{task.details}</p></div>)
+		var taskCards = this.props.tasks.map(task => <div class="taskCard"><h1>{task.name}</h1><p>{task.details}</p></div>);
+		console.log(this.props.tasks);
 		return (<div>{taskCards}</div>);
 	}
 }
