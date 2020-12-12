@@ -61,7 +61,7 @@ class TasksView extends React.Component {
 		let taskCards = [];
 		
 		function cardBuild(name, details) {
-			return <div class="taskCard"><h1>{name}</h1><br><p>{details}</p></div>
+			return <div class="taskCard"><h1>{name}</h1><br /><p>{details}</p></div>
 		}
 		
 		for(let task in tasks) {
