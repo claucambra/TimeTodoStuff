@@ -63,26 +63,13 @@ class TasksView extends React.Component {
 	
 	componentDidUpdate(prevProps) {
 		if (prevProps != this.props) {
-			this.tasksList();
+			console.log("beep");
 		}
-	}
-	
-	tasksList () {
-		let taskCards = [];
-		
-		function cardBuild(name, details) {
-			return <div class="taskCard"><h1>{name}</h1><br /><p>{details}</p></div>
-		}
-		
-		for(let task in this.props.tasks) {
-			taskCards.push(cardBuild(task.name, task.details));
-		}
-		
-		return taskCards;
 	}
 	
 	render () {
-		return (<div>{this.tasksList()}</div>);
+		var taskCards = this.props.tasks.map(task => <div class="taskCard"><h1>{task.name}</h1><br /><p>{task.details}</p></div>)
+		return (<div>{taskCards}</div>);
 	}
 }
 
