@@ -1,3 +1,14 @@
+var tasks = [];
+
+class Task {
+	constructor(name, details) {
+		this.name = name;
+		this.details = details;
+		this.time = Date.now();
+		this.status = 0;
+	}
+}
+
 class TodoApp extends React.Component {
 	constructor (props) {
 		super (props);
@@ -12,16 +23,30 @@ class TodoApp extends React.Component {
 class TaskCreator extends React.Component {
 	constructor (props) {
 		super (props);
+		this.state = {
+			name: "",
+			details: ""
+		}
+		this.addTask = this.addTask.bind(this);
 	}
+	
+	addTask() {
+		let taskToAdd = new Task(this.state.name, this.state.details)
+		tasks.push(taskToAdd);
+		console.log(tasks);
+	}
+	
 	render() {
 		return (
-			<input type="text" placeholder="New Task"></input>
+			<form onSubmit={this.addTask}>
+				<input type="text" id="taskName" placeholder="New Task"></input>
+				<button type="submit">
+			</form>
 		);
 	}
 }
 
-/*
-class TasksView extends React.Component {
+/*class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
 	}
