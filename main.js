@@ -30,4 +30,4 @@ class TasksView extends React.Component {
 	}
 }*/
 
-ReactDOM.render(<TodoApp />, document.getElementbyId("container"));
+ReactDOM.render(<TodoApp />, document.getElementById("container"));
