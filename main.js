@@ -11,7 +11,7 @@ class TodoApp extends React.Component {
 	constructor (props) {
 		super (props);
 		this.state = {
-			tasks: [];
+			tasks: []
 		}
 	}
 	render () {
