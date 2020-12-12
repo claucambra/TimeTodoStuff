@@ -43,7 +43,7 @@ class TaskCreator extends React.Component {
 	render() {
 		return (
 			<form onSubmit={this.addTask}>
-				<input type="text" id="taskName" placeholder="New Task" onChange={inputHandler}></input>
+				<input type="text" id="taskName" placeholder="New Task" onChange={this.inputHandler}></input>
 				<button type="submit">Submit</button>
 			</form>
 		);
