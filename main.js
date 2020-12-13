@@ -37,7 +37,7 @@ class TodoApp extends React.Component {
 		return (
 			<div>
 				<TaskCreator tasks={this.state.tasks} adder={this.addTask}/>
-				<TasksView tasks={this.state.tasks} deleter={this.deleteTask}/>
+				<TasksView tasks={this.state.tasks} completer={this.completeTask} deleter={this.deleteTask}/>
 			</div>
 		);
 	}
@@ -59,15 +59,17 @@ class TaskCreator extends React.Component {
 	}
 
 	submitHandler() {
-		console.log("added")
-		this.props.adder(this.state.name, "placeholder detail");
-		this.setState({name: "", details: ""});
+		this.props.adder(this.state.name, this.state.details);
+		this.setState(state => {
+			state.name = "";
+			state.details = "";
+		});
 	}
 
 	render() {
 		return (
 			<div className="input-group">
-				<input type="text" id="taskName" className="form-control" placeholder="New Task" onChange={this.inputHandler}></input>
+				<input type="text" id="taskName" className="form-control" placeholder="New Task" onChange={this.inputHandler} value={this.state.name}></input>
 				<button type="button" className="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
 			</div>
 		);
@@ -84,9 +86,13 @@ class TasksView extends React.Component {
 		this.props.deleter(event.target.parentElement.id);
 	}
 
+	completeHandler(event) {
+		this.props.completer(event.target.parentElement.id);
+	}
+
 	render () {
 		var taskCards = this.props.tasks.map(task => {
-			return(<div class="taskCard" id={task.id}>
+			return(<div className="taskCard" id={task.id}>
 				<h1>{task.name}</h1>
 				<p>{task.details}</p>
 				<button type="button" className="btn btn-success">Completed</button>
