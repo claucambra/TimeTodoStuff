@@ -147,7 +147,7 @@ class TasksView extends React.Component {
 			return(<li className="taskEntry list-group-item" id={task.id}>
 				<h3>{task.name}</h3>
 				<p>{task.creationTime.toLocaleString("en-US", {dateStyle: "medium", timeStyle: "short", hour12: false})}</p>
-				<button type="button" className="btn btn-success" onClick={this.completeHandler}>{completeButton}</button>
+				<button type="button" className={completeButton == "Completed" ? "btn btn-success" : "btn btn-secondary"} onClick={this.completeHandler}>{completeButton}</button>
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</li>)
 		});
