@@ -14,7 +14,8 @@ class TodoApp extends React.Component {
 			tasks: []
 		}
     this.addTask = this.addTask.bind(this);
-	this.deleteTask = this.deleteTask.bind(this);
+		this.deleteTask = this.deleteTask.bind(this);
+		this.completeTask = this.completeTask.bind(this);
 	}
 
   addTask(name, details) {
@@ -24,6 +25,12 @@ class TodoApp extends React.Component {
 
 	deleteTask(id) {
 		this.setState(state => state.tasks = state.tasks.filter(task => task.id != id));
+	}
+
+	completeTask(id) {
+		let taskToComplete = state.tasks.find(task => task.id == id);
+		this.setState(state => state.tasks.taskToComplete.state = 100);
+		console.log(this.state.tasks.taskToComplete);
 	}
 
 	render () {
