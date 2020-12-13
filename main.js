@@ -14,18 +14,23 @@ class TodoApp extends React.Component {
 			tasks: []
 		}
     this.addTask = this.addTask.bind(this);
+	this.deleteTask = this.deleteTask.bind(this);
 	}
   
   addTask(name, details) {
 		let taskToAdd = new Task(name, details)
-    this.setState(state => state.tasks.push(taskToAdd))
+		this.setState(state => state.tasks.push(taskToAdd))
 	}
-  
+	
+	deleteTask(id) {
+		this.setState(state => state.tasks.filter(task => task.time != id));
+	}
+	
 	render () {
 		return (
 			<div>
 				<TaskCreator tasks={this.state.tasks} adder={this.addTask}/>
-				<TasksView tasks={this.state.tasks}/>
+				<TasksView tasks={this.state.tasks} deleter={this.deleteTask}/>
 			</div>
 		);
 	}
@@ -39,7 +44,7 @@ class TaskCreator extends React.Component {
 			details: ""
 		}
 		this.inputHandler = this.inputHandler.bind(this);
-    this.submitHandler = this.submitHandler.bind(this);
+		this.submitHandler = this.submitHandler.bind(this);
 	}
 	
 	inputHandler(event) {
@@ -53,9 +58,9 @@ class TaskCreator extends React.Component {
   
 	render() {
 		return (
-			<div>
-				<input type="text" id="taskName" placeholder="New Task" onChange={this.inputHandler}></input>
-				<button type="button" onClick={this.submitHandler}>Submit</button>
+			<div class="input-group">
+				<input type="text" id="taskName" class="form-control" placeholder="New Task" onChange={this.inputHandler}></input>
+				<button type="button" class="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
 			</div>
 		);
 	}
@@ -64,16 +69,21 @@ class TaskCreator extends React.Component {
 class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
+		this.deleteHandler = this.deleteHandler.bind(this);
+	}
+	
+	deleteHandler(event) {
+		this.props.adder(event.target.id);
 	}
 	
 	render () {
 		var taskCards = this.props.tasks.map(task => {
-			return(<div class="taskCard">
+			return(<div class="taskCard" id={task.time}>
 				<h1>{task.name}</h1>
 				<p>{task.details}</p>
 				<button type="button" class="btn btn-success">Completed</button>
 				<button type="button" class="btn btn-primary">More details</button>
-				<button type="button" class="btn btn-danger">Delete</button>
+				<button type="button" class="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</div>)
 		});
 		console.log(this.props.tasks);
