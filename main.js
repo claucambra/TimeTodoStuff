@@ -73,7 +73,7 @@ class TasksView extends React.Component {
 	}
 	
 	deleteHandler(event) {
-		this.props.adder(event.target.id);
+		this.props.deleter(event.target.id);
 	}
 	
 	render () {
