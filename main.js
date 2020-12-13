@@ -3,6 +3,8 @@ class Task {
 		this.name = name;
 		this.details = details;
 		this.id = Date.now();
+		this.creationTime = new Date()
+		this.time = 0;
 		this.status = 0;
 	}
 }
@@ -22,7 +24,6 @@ class TodoApp extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {
 		if(JSON.stringify(this.state) != JSON.stringify(prevState)) {
-			console.log("woop")
 			this.updateTaskLists();
 		}
 	}
@@ -72,11 +73,18 @@ class TaskCreator extends React.Component {
 			details: ""
 		}
 		this.inputHandler = this.inputHandler.bind(this);
+		this.keyHandler = this.keyHandler.bind(this);
 		this.submitHandler = this.submitHandler.bind(this);
 	}
 
 	inputHandler(event) {
-		this.setState({name: event.target.value});
+		this.setState({ name: event.target.value });
+	}
+
+	keyHandler(event) {
+		if(event.key == "Enter") {
+			this.submitHandler();
+		}
 	}
 
 	submitHandler() {
@@ -89,9 +97,11 @@ class TaskCreator extends React.Component {
 
 	render() {
 		return (
-			<div className="input-group">
-				<input type="text" id="taskName" className="form-control" placeholder="New Task" onChange={this.inputHandler} value={this.state.name}></input>
-				<button type="button" className="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
+			<div>
+				<div className="input-group">
+					<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.inputHandler} value={this.state.name}></input>
+					<button type="button" className="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
+				</div>
 			</div>
 		);
 	}
@@ -133,7 +143,7 @@ class TasksView extends React.Component {
 		let returnArr = taskArray.map(task => {
 			return(<div className="taskCard" id={task.id}>
 				<h3>{task.name}</h3>
-				<p>{task.details}</p>
+				<p>{task.creationTime.toLocaleString("en-US", {dateStyle: "medium", timeStyle: "short", hour12: false})}</p>
 				<button type="button" className="btn btn-success" onClick={this.completeHandler}>{completeButton}</button>
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</div>)
@@ -153,9 +163,19 @@ class TasksView extends React.Component {
 					<h2>Tasks to complete</h2>
 						{uncompletedCards}
 				</div>
-				<div id="completed-tasks" className="categoryHeader">
-						<h2>Completed Tasks</h2>
-						{completedCards}
+				<div id="completed-tasks" className="categoryHeader accordion">
+					<div className="accordion-item">
+						<h2 className="accordion-header" id="completedHeader">
+							<button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCompleted" aria-expanded="true" aria-controls="collapseCompleted">
+								Completed Tasks
+							</button>
+						</h2>
+						<div id="collapseCompleted" className="accordion-collapse collapse" aria-labelledby="completedHeader" data-bs-parent="#completed-tasks">
+							<div className="accordion-body">
+								{completedCards}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>);
 	}
