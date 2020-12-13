@@ -97,7 +97,7 @@ class TaskCreator extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="taskCreator">
 				<div className="input-group">
 					<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.inputHandler} value={this.state.name}></input>
 					<button type="button" className="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
