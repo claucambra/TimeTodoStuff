@@ -45,7 +45,11 @@ class TodoApp extends React.Component {
 
 	completeTask(id) {
 		let tasksArray = [...this.state.tasks]
-		tasksArray.find(task => task.id == id).status = 100
+		if (tasksArray.find(task => task.id == id).status < 100) {
+			tasksArray.find(task => task.id == id).status = 100;
+		} else {
+			tasksArray.find(task => task.id == id).status = 0;
+		}
 		this.setState({ tasks: [...tasksArray] });
 		this.updateTaskLists();
 	}
@@ -110,14 +114,16 @@ class TasksView extends React.Component {
 	}
 
 	cardGenerator(taskType) {
-		let taskArray;
+		let taskArray, completeButton;
 
 		switch(taskType) {
 			case "uncompleted":
 				taskArray = [...this.props.uncompleted];
+				completeButton = "Completed";
 				break;
 			case "completed":
 				taskArray = [...this.props.completed];
+				completeButton = "Not yet completed";
 				break;
 			default:
 				taskArray = [...this.props.tasks];
@@ -128,8 +134,7 @@ class TasksView extends React.Component {
 			return(<div className="taskCard" id={task.id}>
 				<h3>{task.name}</h3>
 				<p>{task.details}</p>
-				<button type="button" className="btn btn-success" onClick={this.completeHandler}>Completed</button>
-				<button type="button" className="btn btn-primary">More details</button>
+				<button type="button" className="btn btn-success" onClick={this.completeHandler}>{completeButton}</button>
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</div>)
 		});
@@ -144,11 +149,11 @@ class TasksView extends React.Component {
 
 		return (
 			<div>
-				<div id="tasks-to-complete">
+				<div id="tasks-to-complete" className="categoryHeader">
 					<h2>Tasks to complete</h2>
 						{uncompletedCards}
 				</div>
-				<div id="completed-tasks">
+				<div id="completed-tasks" className="categoryHeader">
 						<h2>Completed Tasks</h2>
 						{completedCards}
 				</div>
