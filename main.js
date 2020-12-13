@@ -28,10 +28,10 @@ class TodoApp extends React.Component {
 	}
 
 	completeTask(id) {
-		let taskToComplete = state.tasks.find(task => task.id == id);
+		let taskToComplete = this.state.tasks.find(task => task.id == id);
 		console.log(taskToComplete);
-		this.setState(state => state.tasks.taskToComplete.state = 100);
-		console.log(this.state.tasks.taskToComplete);
+		this.setState(state => state.tasks[state.tasks.indexOf(taskToComplete)].status = 100);
+		console.log(this.state.tasks[this.state.tasks.indexOf(taskToComplete)]);
 	}
 
 	render () {
@@ -81,6 +81,7 @@ class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
 		this.deleteHandler = this.deleteHandler.bind(this);
+		this.completeHandler = this.completeHandler.bind(this);
 	}
 
 	deleteHandler(event) {
@@ -88,6 +89,7 @@ class TasksView extends React.Component {
 	}
 
 	completeHandler(event) {
+		console.log('completing');
 		this.props.completer(event.target.parentElement.id);
 	}
 
@@ -96,7 +98,7 @@ class TasksView extends React.Component {
 			return(<div className="taskCard" id={task.id}>
 				<h1>{task.name}</h1>
 				<p>{task.details}</p>
-				<button type="button" className="btn btn-success">Completed</button>
+				<button type="button" className="btn btn-success" onClick={this.completeHandler}>Completed</button>
 				<button type="button" className="btn btn-primary">More details</button>
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</div>)
