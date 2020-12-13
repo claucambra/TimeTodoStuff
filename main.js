@@ -29,6 +29,7 @@ class TodoApp extends React.Component {
 
 	completeTask(id) {
 		let taskToComplete = state.tasks.find(task => task.id == id);
+		console.log(taskToComplete);
 		this.setState(state => state.tasks.taskToComplete.state = 100);
 		console.log(this.state.tasks.taskToComplete);
 	}
@@ -100,7 +101,6 @@ class TasksView extends React.Component {
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
 			</div>)
 		});
-		console.log(this.props.tasks);
 		return (<div>{taskCards}</div>);
 	}
 }
