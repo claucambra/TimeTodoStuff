@@ -20,19 +20,13 @@ class TodoApp extends React.Component {
 		this.completeTask = this.completeTask.bind(this);
 	}
 
-	componentDidUpdate(prevProps, prevState) {
-		console.log("THIS",JSON.stringify(this.state), "THAT",JSON.stringify(prevState))
-		if (JSON.stringify(this.state) != JSON.stringify(prevState)) {
-			this.setState(state => {
-				state.uncompletedTasks = state.tasks.filter(task => task.status < 100);
-				state.completedTasks = state.tasks.filter(task => task.status == 100);
-			})
-		}
-	}
-
   addTask(name, details) {
 		let taskToAdd = new Task(name, details)
 		this.setState({ tasks: [...this.state.tasks, taskToAdd] })
+		this.setState(state => {
+			state.uncompletedTasks = state.tasks.filter(task => task.status < 100);
+			state.completedTasks = state.tasks.filter(task => task.status == 100);
+		})
 	}
 
 	deleteTask(id) {
@@ -40,6 +34,7 @@ class TodoApp extends React.Component {
 	}
 
 	completeTask(id) {
+		console.log("completing");
 		let taskToComplete = this.state.tasks.find(task => task.id == id);
 		this.setState(state => state.tasks[state.tasks.indexOf(taskToComplete)].status = 100);
 	}
@@ -95,19 +90,23 @@ class TasksView extends React.Component {
 		this.cardGenerator = this.cardGenerator.bind(this)
 	}
 
+	componentDidUpdate(prevProps) {
+		if(prevProps != this.props) {
+			console.log("PROPS RECEIVED:", this.props)
+		}
+	}
+
 	deleteHandler(event) {
 		this.props.deleter(event.target.parentElement.id);
 	}
 
 	completeHandler(event) {
-		console.log('completing');
 		this.props.completer(event.target.parentElement.id);
 	}
 
 	cardGenerator(taskType) {
-		console.log("Building cards")
-
 		let taskArray;
+
 		switch(taskType) {
 			case "uncompleted":
 				taskArray = [...this.props.uncompleted];
@@ -137,7 +136,6 @@ class TasksView extends React.Component {
 		let uncompletedCards = this.cardGenerator("uncompleted");
 		let completedCards = this.cardGenerator("completed");
 		let allCards = this.cardGenerator()
-		console.log(uncompletedCards);
 
 		return (
 			<div>
