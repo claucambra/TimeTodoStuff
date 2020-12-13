@@ -1,3 +1,18 @@
+/*
+
+Ironic to include a to-do list in the code for a to-do list app, I know.
+
+TO-DO:
+- Code timer
+- Display modal box on task click. Add some effect on cursor hover.
+- Add confirmation box when delete button pressed
+- Add display of time allocated (and input section for this
+- Replace React state management of tasks with Redux
+- Figure out the back-end (...)
+
+*/
+
+
 class Task {
 	constructor(name, details) {
 		this.name = name;
@@ -119,11 +134,11 @@ class TasksView extends React.Component {
 	}
 
 	deleteHandler(event) {
-		this.props.deleter(event.target.parentElement.id);
+		this.props.deleter(event.target.parentElement.parentElement.id);
 	}
 
 	completeHandler(event) {
-		this.props.completer(event.target.parentElement.id);
+		this.props.completer(event.target.parentElement.parentElement.id);
 	}
 
 	cardGenerator(taskType) {
@@ -132,11 +147,11 @@ class TasksView extends React.Component {
 		switch(taskType) {
 			case "uncompleted":
 				taskArray = [...this.props.uncompleted];
-				completeButton = "Completed";
+				completeButton = "Done";
 				break;
 			case "completed":
 				taskArray = [...this.props.completed];
-				completeButton = "Not yet completed";
+				completeButton = "Undo";
 				break;
 			default:
 				taskArray = [...this.props.tasks];
@@ -145,10 +160,17 @@ class TasksView extends React.Component {
 
 		let returnArr = taskArray.map(task => {
 			return(<li className="taskEntry list-group-item" id={task.id}>
-				<h3>{task.name}</h3>
-				<p>{task.creationTime.toLocaleString("en-US", {dateStyle: "medium", timeStyle: "short", hour12: false})}</p>
-				<button type="button" className={completeButton == "Completed" ? "btn btn-success" : "btn btn-secondary"} onClick={this.completeHandler}>{completeButton}</button>
-				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
+				<div className="row justify-content-between">
+					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
+					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3" : "btn btn-outline-secondary col-3"} onClick={this.completeHandler}>{completeButton}</button>
+				</div>
+				<div className="timer-section">
+					<p>Time elapsed: {task.workTime == 0 ? "00:00" : task.workTime}</p>
+				</div>
+				<div className="row justify-content-between">
+					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5">Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
+					<button type="button" className="btn btn-outline-danger col-3" onClick={this.deleteHandler}>Delete</button>
+				</div>
 			</li>)
 		});
 
