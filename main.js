@@ -16,16 +16,16 @@ class TodoApp extends React.Component {
     this.addTask = this.addTask.bind(this);
 	this.deleteTask = this.deleteTask.bind(this);
 	}
-  
+
   addTask(name, details) {
 		let taskToAdd = new Task(name, details)
 		this.setState(state => state.tasks.push(taskToAdd))
 	}
-	
+
 	deleteTask(id) {
 		this.setState(state => state.tasks = state.tasks.filter(task => task.id != id));
 	}
-	
+
 	render () {
 		return (
 			<div>
@@ -46,16 +46,17 @@ class TaskCreator extends React.Component {
 		this.inputHandler = this.inputHandler.bind(this);
 		this.submitHandler = this.submitHandler.bind(this);
 	}
-	
+
 	inputHandler(event) {
 		this.setState({name: event.target.value});
 	}
-	
+
 	submitHandler() {
 		console.log("added")
 		this.props.adder(this.state.name, "placeholder detail");
+		this.setState({name: "", details: ""});
 	}
-  
+
 	render() {
 		return (
 			<div className="input-group">
@@ -71,11 +72,11 @@ class TasksView extends React.Component {
 		super (props);
 		this.deleteHandler = this.deleteHandler.bind(this);
 	}
-	
+
 	deleteHandler(event) {
 		this.props.deleter(event.target.parentElement.id);
 	}
-	
+
 	render () {
 		var taskCards = this.props.tasks.map(task => {
 			return(<div class="taskCard" id={task.id}>
