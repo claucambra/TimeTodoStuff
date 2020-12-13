@@ -33,7 +33,7 @@ class TodoApp extends React.Component {
 			uncompletedTasks: [],
 			completedTasks: []
 		}
-    this.addTask = this.addTask.bind(this);
+		this.addTask = this.addTask.bind(this);
 		this.deleteTask = this.deleteTask.bind(this);
 		this.completeTask = this.completeTask.bind(this);
 	}
@@ -51,7 +51,7 @@ class TodoApp extends React.Component {
 		})
 	}
 
-  addTask(name, details) {
+	addTask(name, details) {
 		let taskToAdd = new Task(name, details)
 		this.setState({ tasks: [...this.state.tasks, taskToAdd] })
 	}
