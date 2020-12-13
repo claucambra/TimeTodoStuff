@@ -4,7 +4,8 @@ class Task {
 		this.details = details;
 		this.id = Date.now();
 		this.creationTime = new Date()
-		this.time = 0;
+		this.workTime = 0;
+		this.completionTime = 0;
 		this.status = 0;
 	}
 }
@@ -48,8 +49,10 @@ class TodoApp extends React.Component {
 		let tasksArray = [...this.state.tasks]
 		if (tasksArray.find(task => task.id == id).status < 100) {
 			tasksArray.find(task => task.id == id).status = 100;
+			tasksArray.find(task => task.id == id).completionTime = new Date();
 		} else {
 			tasksArray.find(task => task.id == id).status = 0;
+			tasksArray.find(task => task.id == id).completionTime = 0;
 		}
 		this.setState({ tasks: [...tasksArray] });
 		this.updateTaskLists();
@@ -141,12 +144,12 @@ class TasksView extends React.Component {
 		}
 
 		let returnArr = taskArray.map(task => {
-			return(<div className="taskCard" id={task.id}>
+			return(<li className="taskEntry list-group-item" id={task.id}>
 				<h3>{task.name}</h3>
 				<p>{task.creationTime.toLocaleString("en-US", {dateStyle: "medium", timeStyle: "short", hour12: false})}</p>
 				<button type="button" className="btn btn-success" onClick={this.completeHandler}>{completeButton}</button>
 				<button type="button" className="btn btn-danger" onClick={this.deleteHandler}>Delete</button>
-			</div>)
+			</li>)
 		});
 
 		return returnArr;
@@ -161,7 +164,9 @@ class TasksView extends React.Component {
 			<div>
 				<div id="tasks-to-complete" className="categoryHeader">
 					<h2>Tasks to complete</h2>
+					<ul className="list-group">
 						{uncompletedCards}
+					</ul>
 				</div>
 				<div id="completed-tasks" className="categoryHeader accordion">
 					<div className="accordion-item">
@@ -172,7 +177,9 @@ class TasksView extends React.Component {
 						</h2>
 						<div id="collapseCompleted" className="accordion-collapse collapse" aria-labelledby="completedHeader" data-bs-parent="#completed-tasks">
 							<div className="accordion-body">
-								{completedCards}
+								<ul className="list-group">
+									{completedCards}
+								</ul>
 							</div>
 						</div>
 					</div>
