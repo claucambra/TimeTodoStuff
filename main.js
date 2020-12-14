@@ -193,7 +193,8 @@ class TasksView extends React.Component {
 		let taskID = event.target.parentElement.parentElement.id;
 		if (event.target.className.includes("deleteButton")) {
 			this.props.deleter(taskID);
-		} else if (event.target.className.includes("completeButton")) {
+		} else if (event.target.className.includes("completeButton") ||
+		 event.target.className.includes("uncompleteButton")) {
 			this.props.completer(taskID);
 		}
 		if(this.state.activatedTimerTasks.includes(taskID)) {
@@ -270,7 +271,7 @@ class TasksView extends React.Component {
 			return(<li className={this.state.activatedTimerTasks.includes(String(task.id)) ? "taskEntryActive list-group-item" : "taskEntryInactive list-group-item"} id={task.id} key={task.id}>
 				<div className="row justify-content-between">
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
-					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3"} onClick={this.stateHandler}>{completeButton}</button>
+					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 uncompleteButton"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
 				<div className="row justify-content-between timer-section">
 					<p className="col-4 text-wrap text-break"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>
