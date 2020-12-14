@@ -185,6 +185,24 @@ class TasksView extends React.Component {
 		}
 	}
 
+	msToTime(ms) {
+		let seconds = Math.floor((ms / 1000) % 60);
+		let minutes = Math.floor((ms / (60 * 1000)) % 60);
+		let hours = Math.floor((ms / (60 * 60 * 1000)) % 60);
+
+		if (hours != 0) {
+			return `${hours*60}:0${seconds}`
+		} else if (minutes >= 10 && seconds >= 10) {
+			return `${minutes}:${seconds}`;
+		} else if (minutes < 10 && seconds < 10) {
+			return `0${minutes}:0${seconds}`;
+		} else if (minutes < 10) {
+			return `0${minutes}:${seconds}`;
+		} else if (seconds < 10) {
+			return `${minutes}:0${seconds}`;
+		}
+	}
+
 	cardGenerator(taskType) {
 		let taskArray, completeButton;
 
@@ -209,7 +227,7 @@ class TasksView extends React.Component {
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3" : "btn btn-outline-secondary col-3"} onClick={this.completeHandler}>{completeButton}</button>
 				</div>
 				<div className="timer-section">
-					<p>Time elapsed: {task.workTime == 0 ? "00:00" : task.workTime}</p>
+					<p>Time elapsed: {this.msToTime(task.workTime)}</p>
 				</div>
 				<div className="row justify-content-between">
 					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
