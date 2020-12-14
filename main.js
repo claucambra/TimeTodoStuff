@@ -76,7 +76,7 @@ class TodoApp extends React.Component {
 
 	updateTaskTimers(idArray) {
 		let tasksArray = [...this.state.tasks]
-		for (let id in idArray) {
+		for (let id of idArray) {
 			tasksArray.find(task => task.id == id).workTime += 1;
 			this.setState({ tasks: [...tasksArray] });
 		}
