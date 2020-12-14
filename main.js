@@ -128,17 +128,42 @@ class TaskCreator extends React.Component {
 class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
+		this.state = {
+			timeCurrent: 0,
+			activatedTimerTasks: []
+		}
+		this.timerTask = this.timerTask.bind(this);
 		this.deleteHandler = this.deleteHandler.bind(this);
 		this.completeHandler = this.completeHandler.bind(this);
 		this.cardGenerator = this.cardGenerator.bind(this)
 	}
 
+	componentDidMount() {
+    this.interval = setInterval(() => this.setState({ timeCurrent: Date.now() }), 1);
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+	}
+
 	deleteHandler(event) {
-		this.props.deleter(event.target.parentElement.parentElement.id);
+		let taskID = event.target.parentElement.parentElement.id
+		this.props.deleter(taskID);
+		if(this.state.activatedTimerTasks.includes(taskID)) {
+			this.setState({activatedTimerTasks: [...this.state.activatedTimerTasks.filter(ids => ids != taskID)]})
+		}
 	}
 
 	completeHandler(event) {
 		this.props.completer(event.target.parentElement.parentElement.id);
+	}
+
+	timerTask(event) {
+		let taskID = event.target.parentElement.parentElement.id
+		if(this.state.activatedTimerTasks.includes(event.target.parentElement.parentElement.id)) {
+			this.setState({activatedTimerTasks: [...this.state.activatedTimerTasks.filter(ids => ids != taskID)]})
+		} else {
+			this.setState({ activatedTimerTasks: [...this.state.activatedTimerTasks, taskID] })
+		}
 	}
 
 	cardGenerator(taskType) {
@@ -168,7 +193,7 @@ class TasksView extends React.Component {
 					<p>Time elapsed: {task.workTime == 0 ? "00:00" : task.workTime}</p>
 				</div>
 				<div className="row justify-content-between">
-					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5">Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
+					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
 					<button type="button" className="btn btn-outline-danger col-3" onClick={this.deleteHandler}>Delete</button>
 				</div>
 			</li>)
@@ -184,6 +209,7 @@ class TasksView extends React.Component {
 
 		return (
 			<div>
+				<p>{this.state.timeCurrent}</p>
 				<div id="tasks-to-complete" className="categoryHeader">
 					<h2>Tasks to complete</h2>
 					<ul className="list-group">
