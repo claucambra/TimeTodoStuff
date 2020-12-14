@@ -3,7 +3,6 @@
 Ironic to include a to-do list in the code for a to-do list app, I know.
 
 TO-DO:
-- Code timer
 - Display modal box on task click. Add some effect on cursor hover.
 - Add confirmation box when delete button pressed
 - Add display of time allocated (and input section for this
@@ -190,16 +189,24 @@ class TasksView extends React.Component {
 		let minutes = Math.floor((ms / (60 * 1000)) % 60);
 		let hours = Math.floor((ms / (60 * 60 * 1000)) % 60);
 
-		if (hours != 0) {
-			return `${hours*60}:0${seconds}`
-		} else if (minutes >= 10 && seconds >= 10) {
-			return `${minutes}:${seconds}`;
+		let minsec;
+		if (minutes >= 10 && seconds >= 10) {
+			minsec = `${minutes}:${seconds}`;
 		} else if (minutes < 10 && seconds < 10) {
-			return `0${minutes}:0${seconds}`;
+			minsec = `0${minutes}:0${seconds}`;
 		} else if (minutes < 10) {
-			return `0${minutes}:${seconds}`;
+			minsec = `0${minutes}:${seconds}`;
 		} else if (seconds < 10) {
-			return `${minutes}:0${seconds}`;
+			minsec = `${minutes}:0${seconds}`;
+		} else {
+			minsec = `00:00`;
+		}
+
+		if(hours == 0) {
+			return minsec;
+		} else {
+			let hoursToShow = hours > 10 ? `${hours}:` : `0${hours}:`;
+			return hoursToShow + minsec;
 		}
 	}
 
@@ -225,7 +232,7 @@ class TasksView extends React.Component {
 		let timerDisabledButton = <button type="button" className="btn btn-primary col-5" disabled>Task done</button>
 
 		let returnArr = taskArray.map(task => {
-			return(<li className={this.state.activatedTimerTasks.includes(String(task.id)) ? "taskEntryActive list-group-item" : "taskEntryInactive list-group-item"} id={task.id}>
+			return(<li className={this.state.activatedTimerTasks.includes(String(task.id)) ? "taskEntryActive list-group-item" : "taskEntryInactive list-group-item"} id={task.id} key={task.id}>
 				<div className="row justify-content-between">
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3"} onClick={this.stateHandler}>{completeButton}</button>
