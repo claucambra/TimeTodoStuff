@@ -155,7 +155,7 @@ class TasksView extends React.Component {
 	}
 	componentDidUpdate(prevProps, prevState) {
 		if(this.state.timeCurrent !== prevState.timeCurrent) {
-			this.props.updateTimes(activatedTimerTasks)
+			this.props.updateTimes(this.state.activatedTimerTasks)
 		}
 	}
 
