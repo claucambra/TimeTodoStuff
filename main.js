@@ -41,7 +41,6 @@ class TodoApp extends React.Component {
 
 	componentDidMount() {
 		//Get tasks from local localStorage
-		console.log(localStorage.tasks)
 		if(localStorage.tasks != undefined) {
 			this.setState({ tasks: JSON.parse(localStorage.tasks) })
 		}
@@ -165,22 +164,48 @@ class TaskCreator extends React.Component {
 	}
 
 	render() {
+		let inputBoxes = <div className="inputBoxes">
+			<div className="form-floating">
+				<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.nameInputHandler} value={this.state.name} />
+				<label htmlFor="taskName">New Task</label>
+			</div>
+
+			<div className="input-group">
+				<span className="input-group-text" style={{width:"60px"}}>Time</span>
+				<input type="number" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.hourInputHandler} value={this.state.hours} />
+				<span className="input-group-text">hr</span>
+				<input type="number" min="0" className="form-control numInput" placeholder="00" onKeyDown={this.keyHandler} onChange={this.minuteInputHandler} value={this.state.minutes} />
+				<span className="input-group-text">m</span>
+			</div>
+		</div>
+
 		return (
-			<div className="taskCreator" style={{display:"grid", gridTemplateRows:"1fr 1fr", gridTemplateColumns:"5fr 1fr"}}>
-				<div className="input-group" style={{gridArea:"1 / 1 / span 1 / span 1"}}>
-					<span className="input-group-text" style={{width:"60px"}}>Task</span>
-					<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.nameInputHandler} value={this.state.name} />
+			<div className="taskCreator">
+
+				<div className="modal fade" id="expandedCreator" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="expandedCreatorLabel" aria-hidden="true">
+				  <div className="modal-dialog">
+				    <div className="modal-content">
+				      <div className="modal-header">
+				        <h5 className="modal-title" id="expandedCreatorLabel">Create a new task</h5>
+				        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div className="modal-body">
+				        {inputBoxes}
+				      </div>
+				      <div className="modal-footer">
+				        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				        <button type="button" className="btn btn-primary">Understood</button>
+				      </div>
+				    </div>
+				  </div>
 				</div>
-				<div className="input-group" style={{gridArea:"2 / 1 / span 1 / span 1"}}>
-					<span className="input-group-text" style={{width:"60px"}}>Time</span>
-					<input type="number" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.hourInputHandler} value={this.state.hours} />
-					<span className="input-group-text" >hr</span>
-					<input type="number" min="0" className="form-control numInput" placeholder="00" onKeyDown={this.keyHandler} onChange={this.minuteInputHandler} value={this.state.minutes} />
-					<span className="input-group-text">m</span>
-				</div>
-				<div className="submitterButtonArea" style={{gridArea:"1 / 2 / span 2 / span 1"}}>
-					<button type="button" className="btn btn-outline-secondary submitterButton">More</button>
-					<button type="button" className="btn btn-outline-primary submitterButton" onClick={this.submitHandler}>Submit</button>
+
+				<div id="smallCreator" style={{display:"flex"}}>
+					{inputBoxes}
+					<div className="submitterButtonArea" style={{gridArea:"1 / 2 / span 2 / span 1"}}>
+						<button type="button" className="btn btn-outline-secondary submitterButton" data-bs-toggle="modal" data-bs-target="#expandedCreator">More</button>
+						<button type="button" className="btn btn-outline-primary submitterButton" onClick={this.submitHandler}>Submit</button>
+					</div>
 				</div>
 			</div>
 		);
