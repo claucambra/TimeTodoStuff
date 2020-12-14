@@ -48,6 +48,7 @@ class TodoApp extends React.Component {
 			this.updateTaskLists();
 		}
 		if (JSON.stringify(this.state.onTimers) != JSON.stringify(prevState.onTimers)) {
+			let tasksArray = this.state.tasks;
 			let newTimers = this.state.onTimers.filter(id => prevState.onTimers.includes(id) == false)
 			let oldTimers = prevState.onTimers.filter(id => this.state.onTimers.includes(id) == false)
 			for (let id of newTimers) {
