@@ -63,9 +63,9 @@ class TodoApp extends React.Component {
 			for (let id of newTimers) {
 				this[`${id}Interval`] = setInterval(() => {
 					let tasksArray = this.state.tasks;
-					tasksArray.find(task => task.id == id).workTime += 1000;
+					tasksArray.find(task => task.id == id).workTime += 100;
 					this.setState({ tasks: [...tasksArray] });
-				}, 1000);
+				}, 100);
 			}
 			for (let id of oldTimers) {
 				clearInterval(this[`${id}Interval`])
@@ -129,6 +129,7 @@ class TaskCreator extends React.Component {
 			minutes: 0
 		}
 		this.nameInputHandler = this.nameInputHandler.bind(this);
+		this.detailsInputHandler = this.detailsInputHandler.bind(this);
 		this.hourInputHandler = this.hourInputHandler.bind(this);
 		this.minuteInputHandler = this.minuteInputHandler.bind(this);
 		this.keyHandler = this.keyHandler.bind(this);
@@ -137,6 +138,9 @@ class TaskCreator extends React.Component {
 
 	nameInputHandler(event) {
 		this.setState({ name: event.target.value });
+	}
+	detailsInputHandler(event) {
+		this.setState({ details: event.target.value });
 	}
 	hourInputHandler(event) {
 		this.setState({ hours: event.target.value });
@@ -191,10 +195,15 @@ class TaskCreator extends React.Component {
 				      </div>
 				      <div className="modal-body">
 				        {inputBoxes}
+								<div className="form-floating">
+								  <textarea className="form-control" placeholder="Extra task details" id="taskDetailsArea" onChange={this.detailsInputHandler} value={this.state.details}></textarea>
+								  <label htmlFor="taskDetailsArea">Extra task details</label>
+								</div>
+
 				      </div>
 				      <div className="modal-footer">
 				        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				        <button type="button" className="btn btn-primary">Understood</button>
+				        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={this.submitHandler}>Submit</button>
 				      </div>
 				    </div>
 				  </div>
@@ -230,7 +239,6 @@ class TasksView extends React.Component {
 	}
 
 	stateHandler(event) {
-		console.log(event.target.className)
 		let taskID = event.target.parentElement.parentElement.id;
 		if (event.target.className.includes("deleteButton")) {
 			this.props.deleter(taskID);
