@@ -153,8 +153,7 @@ class TasksView extends React.Component {
 			activatedTimerTasks: []
 		}
 		this.timerTask = this.timerTask.bind(this);
-		this.deleteHandler = this.deleteHandler.bind(this);
-		this.completeHandler = this.completeHandler.bind(this);
+		this.stateHandler = this.stateHandler.bind(this);
 		this.cardGenerator = this.cardGenerator.bind(this)
 	}
 
@@ -164,16 +163,16 @@ class TasksView extends React.Component {
 		}
 	}
 
-	deleteHandler(event) {
-		let taskID = event.target.parentElement.parentElement.id
-		this.props.deleter(taskID);
+	stateHandler(event) {
+		let taskID = event.target.parentElement.parentElement.id;
+		if (event.target.className.includes("deleteButton")) {
+			this.props.deleter(taskID);
+		} else if (event.target.className.includes("completeButton")) {
+			this.props.completer(taskID);
+		}
 		if(this.state.activatedTimerTasks.includes(taskID)) {
 			this.setState({activatedTimerTasks: [...this.state.activatedTimerTasks.filter(ids => ids != taskID)]})
 		}
-	}
-
-	completeHandler(event) {
-		this.props.completer(event.target.parentElement.parentElement.id);
 	}
 
 	timerTask(event) {
@@ -224,14 +223,14 @@ class TasksView extends React.Component {
 			return(<li className="taskEntry list-group-item" id={task.id}>
 				<div className="row justify-content-between">
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
-					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3" : "btn btn-outline-secondary col-3"} onClick={this.completeHandler}>{completeButton}</button>
+					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 completeButton"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
 				<div className="timer-section">
 					<p>Time elapsed: {this.msToTime(task.workTime)}</p>
 				</div>
 				<div className="row justify-content-between">
 					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
-					<button type="button" className="btn btn-outline-danger col-3" onClick={this.deleteHandler}>Delete</button>
+					<button type="button" className="btn btn-outline-danger col-3 deleteButton" onClick={this.stateHandler}>Delete</button>
 				</div>
 			</li>)
 		});
