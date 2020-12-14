@@ -36,6 +36,7 @@ class TodoApp extends React.Component {
 		this.addTask = this.addTask.bind(this);
 		this.deleteTask = this.deleteTask.bind(this);
 		this.completeTask = this.completeTask.bind(this);
+		this.updateTaskTimers = this.updateTaskTimers.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -73,11 +74,19 @@ class TodoApp extends React.Component {
 		this.updateTaskLists();
 	}
 
+	updateTaskTimers(idArray) {
+		let tasksArray = [...this.state.tasks]
+		for (let id in idArray) {
+			tasksArray.find(task => task.id == id).workTime += 1;
+			this.setState({ tasks: [...tasksArray] });
+		}
+	}
+
 	render () {
 		return (
 			<div>
 				<TaskCreator tasks={this.state.tasks} adder={this.addTask}/>
-				<TasksView tasks={this.state.tasks} completer={this.completeTask} deleter={this.deleteTask} completed={this.state.completedTasks} uncompleted={this.state.uncompletedTasks}/>
+				<TasksView tasks={this.state.tasks} completer={this.completeTask} deleter={this.deleteTask} completed={this.state.completedTasks} uncompleted={this.state.uncompletedTasks} updateTimes={this.updateTaskTimers}/>
 			</div>
 		);
 	}
@@ -143,6 +152,11 @@ class TasksView extends React.Component {
   }
   componentWillUnmount() {
     clearInterval(this.interval);
+	}
+	componentDidUpdate(prevProps, prevState) {
+		if(this.state.timeCurrent !== prevState.timeCurrent) {
+			this.props.updateTimes(activatedTimerTasks)
+		}
 	}
 
 	deleteHandler(event) {
