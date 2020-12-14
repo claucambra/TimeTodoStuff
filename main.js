@@ -5,12 +5,11 @@ Ironic to include a to-do list in the code for a to-do list app, I know.
 TO-DO:
 - Display modal box on task click. Add some effect on cursor hover.
 - Add confirmation box when delete button pressed
-- Add display of time allocated (and input section for this
+- Add more details button
 - Replace React state management of tasks with Redux
 - Figure out the back-end (...)
 
 */
-
 
 class Task {
 	constructor(name, details, time) {
@@ -40,12 +39,26 @@ class TodoApp extends React.Component {
 		this.updateTaskTimers = this.updateTaskTimers.bind(this);
 	}
 
+	componentDidMount() {
+		//Get tasks from local localStorage
+		console.log(localStorage.tasks)
+		if(localStorage.tasks != undefined) {
+			this.setState({ tasks: JSON.parse(localStorage.tasks) })
+		}
+	}
+
 	componentWillUnmount() {
-    clearInterval(this.timerInterval);
+		//Stop running timers
+		for(let task of this.state.tasks) {
+			clearInterval(this[`${id}Interval`]);
+		}
 	}
 	componentDidUpdate(prevProps, prevState) {
 		if(JSON.stringify(this.state) != JSON.stringify(prevState)) {
+			//Updates filtered tasks lists
 			this.updateTaskLists();
+
+			//Add new timers and delete timers as needed
 			let newTimers = this.state.onTimers.filter(id => prevState.onTimers.includes(id) == false)
 			let oldTimers = prevState.onTimers.filter(id => this.state.onTimers.includes(id) == false)
 			for (let id of newTimers) {
@@ -58,6 +71,9 @@ class TodoApp extends React.Component {
 			for (let id of oldTimers) {
 				clearInterval(this[`${id}Interval`])
 			}
+
+			//Write to local storage
+			localStorage.setItem("tasks", JSON.stringify(this.state.tasks))
 		}
 	}
 
@@ -263,9 +279,9 @@ class TasksView extends React.Component {
 				break;
 		}
 
-		let timerStartButton = <button type="button" className="btn btn-outline-primary col-5" onClick={this.timerTask}>Start timer</button>
-		let timerStopButton = <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Stop timer</button>
-		let timerDisabledButton = <button type="button" className="btn btn-primary col-5" disabled>Task done</button>
+		let timerStartButton = <button type="button" className="btn btn-outline-primary col-4" onClick={this.timerTask}>Start timer</button>
+		let timerStopButton = <button type="button" className="btn btn-primary col-4" onClick={this.timerTask}>Stop timer</button>
+		let timerDisabledButton = <button type="button" className="btn btn-primary col-4" disabled>Task done</button>
 
 		let returnArr = taskArray.map(task => {
 			return(<li className={this.state.activatedTimerTasks.includes(String(task.id)) ? "taskEntryActive list-group-item" : "taskEntryInactive list-group-item"} id={task.id} key={task.id}>
@@ -274,8 +290,8 @@ class TasksView extends React.Component {
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 uncompleteButton"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
 				<div className="row justify-content-between timer-section">
-					<p className="col-4 text-wrap text-break"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>
-					<p className="col-4 text-wrap text-break text-end"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
+					<p className="col-5 text-wrap text-break"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>
+					<p className="col-5 text-wrap text-break text-end"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
 				</div>
 				<div className="row justify-content-between">
 					{taskType == "completed" ? timerDisabledButton :
