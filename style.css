@@ -1,5 +1,15 @@
 #container {
   padding:20px;
+  max-width: 750px;
+  margin: auto;
+}
+
+.numInput {
+  min-width: 50px;
+}
+
+.submitterButton {
+  width: 100%;
 }
 
 .taskCreator {
@@ -8,4 +18,8 @@
 
 .categoryHeader {
   margin-bottom: 20px;
+}
+
+.timer-section {
+  margin-top: 15px;
 }

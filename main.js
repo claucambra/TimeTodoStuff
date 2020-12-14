@@ -13,13 +13,14 @@ TO-DO:
 
 
 class Task {
-	constructor(name, details) {
+	constructor(name, details, time) {
 		this.name = name;
 		this.details = details;
 		this.id = Date.now();
 		this.creationTime = new Date()
 		this.workTime = 0;
 		this.completionTime = 0;
+		this.expectedTime = time;
 		this.status = 0;
 	}
 }
@@ -67,8 +68,8 @@ class TodoApp extends React.Component {
 		})
 	}
 
-	addTask(name, details) {
-		let taskToAdd = new Task(name, details)
+	addTask(name, details, time) {
+		let taskToAdd = new Task(name, details, time)
 		this.setState({ tasks: [...this.state.tasks, taskToAdd] })
 	}
 
@@ -108,15 +109,25 @@ class TaskCreator extends React.Component {
 		super (props);
 		this.state = {
 			name: "",
-			details: ""
+			details: "",
+			hours: 0,
+			minutes: 0
 		}
-		this.inputHandler = this.inputHandler.bind(this);
+		this.nameInputHandler = this.nameInputHandler.bind(this);
+		this.hourInputHandler = this.hourInputHandler.bind(this);
+		this.minuteInputHandler = this.minuteInputHandler.bind(this);
 		this.keyHandler = this.keyHandler.bind(this);
 		this.submitHandler = this.submitHandler.bind(this);
 	}
 
-	inputHandler(event) {
+	nameInputHandler(event) {
 		this.setState({ name: event.target.value });
+	}
+	hourInputHandler(event) {
+		this.setState({ hours: event.target.value });
+	}
+	minuteInputHandler(event) {
+		this.setState({ minutes: event.target.value });
 	}
 
 	keyHandler(event) {
@@ -126,19 +137,34 @@ class TaskCreator extends React.Component {
 	}
 
 	submitHandler() {
-		this.props.adder(this.state.name, this.state.details);
-		this.setState(state => {
-			state.name = "";
-			state.details = "";
-		});
+		if(this.state.name != "") {
+			this.props.adder(this.state.name, this.state.details, ((this.state.hours*60*60*1000)+(this.state.minutes*60*1000)));
+			this.setState(state => {
+				state.name = "";
+				state.details = "";
+				state.hours = 0;
+				state.minutes = 0
+			});
+		}
 	}
 
 	render() {
 		return (
-			<div className="taskCreator">
-				<div className="input-group">
-					<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.inputHandler} value={this.state.name}></input>
-					<button type="button" className="btn btn-outline-secondary" onClick={this.submitHandler}>Submit</button>
+			<div className="taskCreator" style={{display:"grid", gridTemplateRows:"1fr 1fr", gridTemplateColumns:"5fr 1fr"}}>
+				<div className="input-group" style={{gridArea:"1 / 1 / span 1 / span 1"}}>
+					<span className="input-group-text" style={{width:"60px"}}>Task</span>
+					<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.nameInputHandler} value={this.state.name} />
+				</div>
+				<div className="input-group" style={{gridArea:"2 / 1 / span 1 / span 1"}}>
+					<span className="input-group-text" style={{width:"60px"}}>Time</span>
+					<input type="number" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.hourInputHandler} value={this.state.hours} />
+					<span className="input-group-text" >hr</span>
+					<input type="number" min="0" className="form-control numInput" placeholder="00" onKeyDown={this.keyHandler} onChange={this.minuteInputHandler} value={this.state.minutes} />
+					<span className="input-group-text">m</span>
+				</div>
+				<div className="submitterButtonArea" style={{gridArea:"1 / 2 / span 2 / span 1"}}>
+					<button type="button" className="btn btn-outline-secondary submitterButton">More</button>
+					<button type="button" className="btn btn-outline-primary submitterButton" onClick={this.submitHandler}>Submit</button>
 				</div>
 			</div>
 		);
@@ -184,29 +210,38 @@ class TasksView extends React.Component {
 		}
 	}
 
-	msToTime(ms) {
+	msToTime(ms, length) {
 		let seconds = Math.floor((ms / 1000) % 60);
 		let minutes = Math.floor((ms / (60 * 1000)) % 60);
 		let hours = Math.floor((ms / (60 * 60 * 1000)) % 60);
 
-		let minsec;
+		let hoursToShow = hours > 10 ? `${hours}:` : `0${hours}:`;
+		let min, sec;
 		if (minutes >= 10 && seconds >= 10) {
-			minsec = `${minutes}:${seconds}`;
+			min = `${minutes}`;
+			sec = `:${seconds}`;
 		} else if (minutes < 10 && seconds < 10) {
-			minsec = `0${minutes}:0${seconds}`;
+			min = `0${minutes}`;
+			sec = `:0${seconds}`;
 		} else if (minutes < 10) {
-			minsec = `0${minutes}:${seconds}`;
+			min = `0${minutes}`;
+			sec = `:${seconds}`;
 		} else if (seconds < 10) {
-			minsec = `${minutes}:0${seconds}`;
+			min = `${minutes}`
+			sec = `:0${seconds}`;
 		} else {
-			minsec = `00:00`;
+			min = `00`
+			sec = `00`;
 		}
 
-		if(hours == 0) {
-			return minsec;
+		if (length == "long") {
+			if(hours == 0) {
+				return min + sec;
+			} else {
+				return hoursToShow + min + sec;
+			}
 		} else {
-			let hoursToShow = hours > 10 ? `${hours}:` : `0${hours}:`;
-			return hoursToShow + minsec;
+			return hoursToShow + min + " hours"
 		}
 	}
 
@@ -237,8 +272,9 @@ class TasksView extends React.Component {
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
-				<div className="timer-section">
-					<p>Time elapsed: {this.msToTime(task.workTime)}</p>
+				<div className="row justify-content-between timer-section">
+					<p className="col-4 text-wrap text-break"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>
+					<p className="col-4 text-wrap text-break text-end"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
 				</div>
 				<div className="row justify-content-between">
 					{taskType == "completed" ? timerDisabledButton :
