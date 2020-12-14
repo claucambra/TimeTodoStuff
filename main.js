@@ -31,7 +31,8 @@ class TodoApp extends React.Component {
 		this.state = {
 			tasks: [],
 			uncompletedTasks: [],
-			completedTasks: []
+			completedTasks: [],
+			onTimers: []
 		}
 		this.addTask = this.addTask.bind(this);
 		this.deleteTask = this.deleteTask.bind(this);
@@ -39,9 +40,25 @@ class TodoApp extends React.Component {
 		this.updateTaskTimers = this.updateTaskTimers.bind(this);
 	}
 
+	componentWillUnmount() {
+    clearInterval(this.timerInterval);
+	}
 	componentDidUpdate(prevProps, prevState) {
 		if(JSON.stringify(this.state) != JSON.stringify(prevState)) {
 			this.updateTaskLists();
+		}
+		if (JSON.stringify(this.state.onTimers) != JSON.stringify(prevState.onTimers)) {
+			let newTimers = this.state.onTimers.filter(id => prevState.onTimers.includes(id) == false)
+			let oldTimers = prevState.onTimers.filter(id => this.state.onTimers.includes(id) == false)
+			for (let id of newTimers) {
+				this[`${id}Interval`] = setInterval(() => {
+					tasksArray.find(task => task.id == id).workTime += 1000;
+					this.setState({ tasks: [...tasksArray] });
+				});
+			}
+			for (let id of oldTimers) {
+				clearInterval(this[`${id}Interval`])
+			}
 		}
 	}
 
@@ -75,11 +92,7 @@ class TodoApp extends React.Component {
 	}
 
 	updateTaskTimers(idArray) {
-		let tasksArray = [...this.state.tasks]
-		for (let id of idArray) {
-			tasksArray.find(task => task.id == id).workTime += 1;
-			this.setState({ tasks: [...tasksArray] });
-		}
+		this.setState({ onTimers: idArray });
 	}
 
 	render () {
@@ -138,7 +151,6 @@ class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
 		this.state = {
-			timeCurrent: 0,
 			activatedTimerTasks: []
 		}
 		this.timerTask = this.timerTask.bind(this);
@@ -147,14 +159,8 @@ class TasksView extends React.Component {
 		this.cardGenerator = this.cardGenerator.bind(this)
 	}
 
-	componentDidMount() {
-    this.interval = setInterval(() => this.setState({ timeCurrent: Date.now() }), 1);
-  }
-  componentWillUnmount() {
-    clearInterval(this.interval);
-	}
 	componentDidUpdate(prevProps, prevState) {
-		if(this.state.timeCurrent !== prevState.timeCurrent) {
+		if(this.state.activatedTimerTasks !== prevState.activatedTimerTasks) {
 			this.props.updateTimes(this.state.activatedTimerTasks)
 		}
 	}
