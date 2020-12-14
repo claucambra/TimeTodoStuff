@@ -164,6 +164,7 @@ class TasksView extends React.Component {
 	}
 
 	stateHandler(event) {
+		console.log(event.target.className)
 		let taskID = event.target.parentElement.parentElement.id;
 		if (event.target.className.includes("deleteButton")) {
 			this.props.deleter(taskID);
@@ -219,17 +220,22 @@ class TasksView extends React.Component {
 				break;
 		}
 
+		let timerStartButton = <button type="button" className="btn btn-outline-primary col-5" onClick={this.timerTask}>Start timer</button>
+		let timerStopButton = <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Stop timer</button>
+		let timerDisabledButton = <button type="button" className="btn btn-primary col-5" disabled>Task done</button>
+
 		let returnArr = taskArray.map(task => {
-			return(<li className="taskEntry list-group-item" id={task.id}>
+			return(<li className={this.state.activatedTimerTasks.includes(String(task.id)) ? "taskEntryActive list-group-item" : "taskEntryInactive list-group-item"} id={task.id}>
 				<div className="row justify-content-between">
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
-					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 completeButton"} onClick={this.stateHandler}>{completeButton}</button>
+					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
 				<div className="timer-section">
 					<p>Time elapsed: {this.msToTime(task.workTime)}</p>
 				</div>
 				<div className="row justify-content-between">
-					{completeButton == "Done" ? <button type="button" className="btn btn-primary col-5" onClick={this.timerTask}>Start timer</button> : <button type="button" className="btn btn-primary col-5" disabled>Task done</button>}
+					{taskType == "completed" ? timerDisabledButton :
+						this.state.activatedTimerTasks.includes(String(task.id)) ? timerStopButton : timerStartButton}
 					<button type="button" className="btn btn-outline-danger col-3 deleteButton" onClick={this.stateHandler}>Delete</button>
 				</div>
 			</li>)
@@ -244,7 +250,7 @@ class TasksView extends React.Component {
 		let allCards = this.cardGenerator()
 
 		return (
-			<div>
+			<div id="taskListView">
 				<p>{this.state.timeCurrent}</p>
 				<div id="tasks-to-complete" className="categoryHeader">
 					<h2>Tasks to complete</h2>
