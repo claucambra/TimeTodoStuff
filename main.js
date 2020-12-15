@@ -3,24 +3,24 @@
 Ironic to include a to-do list in the code for a to-do list app, I know.
 
 TO-DO:
-- Display modal box on task click. Add some effect on cursor hover.
+
 - Add confirmation box when delete button pressed
-- Add more details button
 - Replace React state management of tasks with Redux
 - Figure out the back-end (...)
 
 */
 
 class Task {
-	constructor(name, details, time) {
+	constructor(name, details, time, dateDue) {
 		this.name = name;
 		this.details = details;
 		this.id = Date.now();
-		this.creationTime = new Date()
+		this.creationTime = (new Date()).toLocaleString();
 		this.workTime = 0;
 		this.completionTime = 0;
 		this.expectedTime = time;
 		this.status = 0;
+		this.due = dateDue;
 	}
 }
 
@@ -83,8 +83,8 @@ class TodoApp extends React.Component {
 		})
 	}
 
-	addTask(name, details, time) {
-		let taskToAdd = new Task(name, details, time)
+	addTask(name, details, time, dateDue) {
+		let taskToAdd = new Task(name, details, time, dateDue)
 		this.setState({ tasks: [...this.state.tasks, taskToAdd] })
 	}
 
@@ -126,12 +126,14 @@ class TaskCreator extends React.Component {
 			name: "",
 			details: "",
 			hours: 0,
-			minutes: 0
+			minutes: 0,
+			date: 0
 		}
 		this.nameInputHandler = this.nameInputHandler.bind(this);
 		this.detailsInputHandler = this.detailsInputHandler.bind(this);
 		this.hourInputHandler = this.hourInputHandler.bind(this);
 		this.minuteInputHandler = this.minuteInputHandler.bind(this);
+		this.dateInputHandler = this.dateInputHandler.bind(this);
 		this.keyHandler = this.keyHandler.bind(this);
 		this.submitHandler = this.submitHandler.bind(this);
 	}
@@ -148,6 +150,11 @@ class TaskCreator extends React.Component {
 	minuteInputHandler(event) {
 		this.setState({ minutes: event.target.value });
 	}
+	dateInputHandler(event) {
+		this.setState({ date: event.target.value });
+		console.log(this.state.date)
+		console.log(event.target.value)
+	}
 
 	keyHandler(event) {
 		if(event.key == "Enter") {
@@ -157,12 +164,13 @@ class TaskCreator extends React.Component {
 
 	submitHandler() {
 		if(this.state.name != "") {
-			this.props.adder(this.state.name, this.state.details, ((this.state.hours*60*60*1000)+(this.state.minutes*60*1000)));
+			this.props.adder(this.state.name, this.state.details, ((this.state.hours*60*60*1000)+(this.state.minutes*60*1000)), this.state.date);
 			this.setState(state => {
 				state.name = "";
 				state.details = "";
 				state.hours = 0;
-				state.minutes = 0
+				state.minutes = 0;
+				state.date = 0;
 			});
 		}
 	}
@@ -180,6 +188,11 @@ class TaskCreator extends React.Component {
 				<span className="input-group-text">hr</span>
 				<input type="number" min="0" className="form-control numInput" placeholder="00" onKeyDown={this.keyHandler} onChange={this.minuteInputHandler} value={this.state.minutes} />
 				<span className="input-group-text">m</span>
+			</div>
+
+			<div className="input-group">
+				<span className="input-group-text" style={{width:"60px"}}>Due</span>
+				<input type="date" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.dateInputHandler} value={this.state.date} />
 			</div>
 		</div>
 
@@ -211,7 +224,7 @@ class TaskCreator extends React.Component {
 
 				<div id="smallCreator" style={{display:"flex"}}>
 					{inputBoxes}
-					<div className="submitterButtonArea" style={{gridArea:"1 / 2 / span 2 / span 1"}}>
+					<div className="btn-group submitterButtonArea" role="group" style={{gridArea:"1 / 2 / span 2 / span 1"}} aria-label="Submit buttons">
 						<button type="button" className="btn btn-outline-secondary submitterButton" data-bs-toggle="modal" data-bs-target="#expandedCreator">More</button>
 						<button type="button" className="btn btn-outline-primary submitterButton" onClick={this.submitHandler}>Submit</button>
 					</div>
@@ -225,11 +238,14 @@ class TasksView extends React.Component {
 	constructor (props) {
 		super (props);
 		this.state = {
-			activatedTimerTasks: []
+			activatedTimerTasks: [],
+			moreViewOpen: false,
+			openTask: {}
 		}
 		this.timerTask = this.timerTask.bind(this);
 		this.stateHandler = this.stateHandler.bind(this);
-		this.cardGenerator = this.cardGenerator.bind(this)
+		this.cardGenerator = this.cardGenerator.bind(this);
+		this.getTaskInfo = this.getTaskInfo.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -263,7 +279,7 @@ class TasksView extends React.Component {
 	msToTime(ms, length) {
 		let seconds = Math.floor((ms / 1000) % 60);
 		let minutes = Math.floor((ms / (60 * 1000)) % 60);
-		let hours = Math.floor((ms / (60 * 60 * 1000)) % 60);
+		let hours = Math.floor((ms / (60 * 60 * 1000)));
 
 		let hoursToShow = hours > 10 ? `${hours}:` : `0${hours}:`;
 		let min, sec;
@@ -322,19 +338,30 @@ class TasksView extends React.Component {
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 uncompleteButton"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
+				{task.due == 0 ? console.log("No due date") : <p><strong>Due: </strong>{task.due}</p>}
 				<div className="row justify-content-between timer-section">
-					<p className="col-5 text-wrap text-break"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>
-					<p className="col-5 text-wrap text-break text-end"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
+					<p className="col-5 text-wrap text-break"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
+					{task.expectedTime == 0 ? <p className="col-5 text-wrap text-break"></p> : <p className="col-5 text-wrap text-break text-end"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>}
 				</div>
 				<div className="row justify-content-between">
 					{taskType == "completed" ? timerDisabledButton :
 						this.state.activatedTimerTasks.includes(String(task.id)) ? timerStopButton : timerStartButton}
+						<button type="button" className="btn btn-outline-secondary col-3 moreButton" data-bs-toggle="modal" data-bs-target="#moreView" onClick={this.getTaskInfo}>Details</button>
 					<button type="button" className="btn btn-outline-danger col-3 deleteButton" onClick={this.stateHandler}>Delete</button>
 				</div>
 			</li>)
 		});
 
 		return returnArr;
+	}
+
+	getTaskInfo(event) {
+		/*if(this.state.moreViewOpen = true) {
+			this.setState({moreViewOpen: false, openTask: {} });
+		} else {*/
+			let taskID = event.target.parentElement.parentElement.id;
+			this.setState({moreViewOpen: true, openTask: this.props.tasks.find(task => task.id == event.target.parentElement.parentElement.id)});
+		//}
 	}
 
 	render () {
@@ -344,13 +371,33 @@ class TasksView extends React.Component {
 
 		return (
 			<div id="taskListView">
-				<p>{this.state.timeCurrent}</p>
+
+				<div className="modal fade" id="moreView" data-bs-backdrop="modal" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="moreViewLabel" aria-hidden="true">
+				  <div className="modal-dialog modal-dialog-centered">
+				    <div className="modal-content">
+				      <div className="modal-header">
+				        <h5 className="modal-title" id="moreViewLabel">Details</h5>
+				        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				      </div>
+				      <div className="modal-body">
+
+								<div className="form-floating">
+								  <textarea className="form-control" placeholder="Extra task details" id="moreViewDetailsArea"  value={this.state.openTask.details}></textarea>
+								  <label htmlFor="moreViewDetailsArea">Extra task details</label>
+								</div>
+								<p>Created: {this.state.openTask.creationTime}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<div id="tasks-to-complete" className="categoryHeader">
 					<h2>Tasks to complete</h2>
 					<ul className="list-group">
 						{uncompletedCards}
 					</ul>
 				</div>
+
 				<div id="completed-tasks" className="categoryHeader accordion">
 					<div className="accordion-item">
 						<h2 className="accordion-header" id="completedHeader">
