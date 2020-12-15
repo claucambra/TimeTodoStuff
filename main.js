@@ -174,12 +174,12 @@ class TaskCreator extends React.Component {
 	}
 
 	render() {
-		let taskNameBox = <div className="form-floating" id="taskNameBox">
+		let taskNameBox = <div className="form-floating" id="taskNameBox" key="taskNameBox">
 				<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.nameInputHandler} value={this.state.name} />
 				<label htmlFor="taskName">New Task</label>
 			</div>
 
-		let expectedTimeBox = <div className="input-group">
+		let expectedTimeBox = <div className="input-group" key="expectedTimeBox">
 				<span className="input-group-text" style={{width:"60px"}}>Time</span>
 				<input type="number" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.hourInputHandler} value={this.state.hours} />
 				<span className="input-group-text">hr</span>
@@ -187,7 +187,7 @@ class TaskCreator extends React.Component {
 				<span className="input-group-text">m</span>
 			</div>
 
-		let dueDateBox = <div className="input-group">
+		let dueDateBox = <div className="input-group" key="dueDateBox">
 				<span className="input-group-text" style={{width:"60px"}}>Due</span>
 				<input type="date" className="form-control numInput" min="0" placeholder="00" onKeyDown={this.keyHandler} onChange={this.dateInputHandler} value={this.state.date} />
 			</div>
@@ -340,7 +340,7 @@ class TasksView extends React.Component {
 				<div className="row justify-content-between timer-section">
 					<p className="col-5 text-wrap text-break"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
 					{task.expectedTime == 0 ? <p className="col-5 text-wrap text-break"></p> : <p className="col-5 text-wrap text-break text-end"><strong>Remaining:</strong><br />
-					{task.expectedTime-task.workTime > 0 ? <p>{this.msToTime(task.expectedTime-task.workTime, "short")}</p> : <p style={{color:"red", fontWeight:"bold"}}>OVERDUE</p>}</p>}
+					{task.expectedTime-task.workTime > 0 ? this.msToTime(task.expectedTime-task.workTime, "short") : <strong style={{color:"red"}}>OVERDUE</strong>}</p>}
 				</div>
 				<div className="row justify-content-between">
 					{taskType == "completed" ? timerDisabledButton :
