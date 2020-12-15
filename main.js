@@ -152,8 +152,6 @@ class TaskCreator extends React.Component {
 	}
 	dateInputHandler(event) {
 		this.setState({ date: event.target.value });
-		console.log(this.state.date)
-		console.log(event.target.value)
 	}
 
 	keyHandler(event) {
@@ -338,10 +336,10 @@ class TasksView extends React.Component {
 					<h3 className="col-8 text-wrap text-break">{task.name}</h3>
 					<button type="button" className={completeButton == "Done" ? "btn btn-outline-success col-3 completeButton" : "btn btn-outline-secondary col-3 uncompleteButton"} onClick={this.stateHandler}>{completeButton}</button>
 				</div>
-				{task.due == 0 ? console.log("No due date") : <p><strong>Due: </strong>{task.due}</p>}
+				{task.due == 0 ? <p></p> : <p><strong>Due: </strong>{task.due}</p>}
 				<div className="row justify-content-between timer-section">
 					<p className="col-5 text-wrap text-break"><strong>Time elapsed:</strong><br />{this.msToTime(task.workTime, "long")}</p>
-					{task.expectedTime == 0 ? <p className="col-5 text-wrap text-break"></p> : <p className="col-5 text-wrap text-break text-end"><strong>Finish within:</strong><br /> {this.msToTime(task.expectedTime, "short")}</p>}
+					{task.expectedTime == 0 ? <p className="col-5 text-wrap text-break"></p> : <p className="col-5 text-wrap text-break text-end"><strong>Remaining:</strong><br /> <p style={task.expectedTime-task.workTime > 0 ? {} : {color:"red"}}>{this.msToTime(task.expectedTime-task.workTime, "short")}</p></p>}
 				</div>
 				<div className="row justify-content-between">
 					{taskType == "completed" ? timerDisabledButton :
@@ -385,7 +383,8 @@ class TasksView extends React.Component {
 								  <textarea className="form-control" placeholder="Extra task details" id="moreViewDetailsArea"  value={this.state.openTask.details}></textarea>
 								  <label htmlFor="moreViewDetailsArea">Extra task details</label>
 								</div>
-								<p>Created: {this.state.openTask.creationTime}</p>
+								<p><strong>Allocated time:</strong> {this.state.openTask.expectedTime}</p>
+								<p><strong>Created:</strong> {this.state.openTask.creationTime}</p>
 							</div>
 						</div>
 					</div>
