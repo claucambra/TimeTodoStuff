@@ -5,13 +5,16 @@
 }
 
 /* Input section */
+#taskNameBox {
+    width: 100%;
+}
+
 .numInput {
   min-width: 50px;
 }
 
 .submitterButtonArea {
   margin-left: 5px;
-  flex: 1 1 0;
   display: flex;
 }
 

@@ -176,7 +176,7 @@ class TaskCreator extends React.Component {
 	}
 
 	render() {
-		let taskNameBox = <div className="form-floating">
+		let taskNameBox = <div className="form-floating" id="taskNameBox">
 				<input type="text" id="taskName" className="form-control" placeholder="New Task" onKeyDown={this.keyHandler} onChange={this.nameInputHandler} value={this.state.name} />
 				<label htmlFor="taskName">New Task</label>
 			</div>
